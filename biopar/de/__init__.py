@@ -2,7 +2,7 @@ import numpy as np
 from typing import *
 
 #import de.pso_cpu as pso_cpu
-import de.de_gpu as de_gpu
+import biopar.de.de_gpu as de_gpu
 
 class DE:
     def __init__(self, target: Callable[[np.ndarray], float], limits : np.ndarray, n_agents : int, mode : str = "cpu", lazy_min : bool = True):

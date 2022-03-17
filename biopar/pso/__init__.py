@@ -1,8 +1,8 @@
 import numpy as np
 from typing import *
 
-import pso.pso_cpu as pso_cpu
-import pso.pso_gpu as pso_gpu
+import biopar.pso.pso_cpu as pso_cpu
+import biopar.pso.pso_gpu as pso_gpu
 
 class PSO:
     def __init__(self, target: Callable[[np.ndarray], float], limits : np.ndarray, n_particles : int, mode : str = "cpu", lazy_min : bool = True):
