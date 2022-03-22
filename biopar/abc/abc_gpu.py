@@ -49,7 +49,7 @@ def generate_bees_gpu(num_bees : int, fun : Callable[[np.ndarray], float], limit
     return bees, fitness
 
 
-def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Callable[[np.ndarray], float], fitness : DeviceNDArray, max_trials : float, num_iterations : int):
+def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Callable[[np.ndarray], float], fitness : DeviceNDArray, max_trials : float, num_iterations : int, best : DeviceNDArray = None, best_value : DeviceNDArray = None):
 
     @cuda.jit
     def bee_employer_iteration(
@@ -165,7 +165,7 @@ def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Call
                 ## START CRITICAL SECTION
                 if v < best_value[0]:
                     for i in range(ldim):
-                        best[i] = bees[x, k]
+                        best[i] = bees[x, i]
                 best_value[0] = v
                 ## END CRITICAL SECTION
                 
@@ -196,8 +196,12 @@ def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Call
     num_bees, ldim = bees.shape
 
     sum_value = cuda.device_array(shape=1)
-    best = cuda.device_array(shape=ldim)
-    best_value = cuda.device_array(shape=1)
+    if best is None:
+        best = cuda.device_array(shape=ldim)
+        bees[0].copy_to_device(best)
+    if best_value is None:
+        best_value = cuda.device_array(shape=1)
+        best_value[0] = fitness[0]
     mutex = cuda.to_device(np.array([0]))
     minmax_values = cuda.device_array(shape=2)
 
@@ -222,5 +226,5 @@ def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Call
         bee_abandoned_iteration[blocks_employer, threadsPerBlock](bees, limits, ldim, trials, num_bees, fitness, rng_states, max_trials)
     
 
-    return best.copy_to_host(), best_value[0]
+    return bees, fitness, best, best_value
 
