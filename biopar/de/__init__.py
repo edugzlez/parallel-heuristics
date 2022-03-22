@@ -1,7 +1,7 @@
 import numpy as np
 from typing import *
 
-#import de.pso_cpu as pso_cpu
+import biopar.de.de_cpu as de_cpu
 import biopar.de.de_gpu as de_gpu
 
 class DE:
@@ -17,14 +17,13 @@ class DE:
         if self.__mode == "gpu":
             self.__agents = de_gpu.generate_agents_de_gpu(n_agents, limits, target)
         else:
-            #self.__agents, self.__best_global = pso_cpu.generate_particles_cpu(n_particles, limits, target)
-            x = 1
+            self.__agents, self.__best_global = de_cpu.generate_agents_cpu(n_agents, limits, target)
 
     def iterate(self, n_iterations : int, CR : float, F : float):
         if self.__mode == "gpu":
             self.__agents, self.__best_global = de_gpu.run_gpu_de_iterations(self.__agents, n_iterations, self.__limits, self.__target, CR, F, self.__lazy_min)
         else:
-            pass #self.__particles, self.__best_global  = pso_cpu.run_cpu_pso_iterations(self.__particles, self.__target, n_iterations, self.__n_particles, self.__dim, w, phi_p, phi_g)
+            self.__agents, self.__best_global  = de_cpu.run_cpu_de_iterations(self.__agents, self.__target, n_iterations, CR, F, self.__best_global)
 
     def getResult(self) -> Tuple[np.ndarray, float]:
         v = self.__agents[int(self.__best_global[0]), :self.__dim]
