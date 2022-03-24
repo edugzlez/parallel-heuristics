@@ -8,8 +8,7 @@ import warnings
 import tqdm
 from numba.cuda.cudadrv.devicearray import DeviceNDArray
 warnings.filterwarnings('ignore')
-MAGIC_NUM = 512
-gpu = cuda.get_current_device()
+MAGIC_NUM = 64
 
 def generate_particles_gpu(n_particles : int, limits : np.ndarray, fun : Callable[[np.ndarray], float], lazy_min : bool = True) -> DeviceNDArray:
     limits = cuda.to_device(limits)
