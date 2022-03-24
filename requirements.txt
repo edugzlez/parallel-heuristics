@@ -1,0 +1,3 @@
+tqdm
+numba
+numpy<=1.21
