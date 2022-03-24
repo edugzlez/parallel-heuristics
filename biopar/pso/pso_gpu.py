@@ -72,12 +72,6 @@ def generate_particles_gpu(n_particles : int, limits : np.ndarray, fun : Callabl
     evaluate_pso_particles_gpu[math.ceil(n_particles/MAGIC_NUM) , MAGIC_NUM](particles, mutex, best_global, lazy_min)
 
     return particles, best_global
-@cuda.jit
-def addOne(mat):
-    x, y = cuda.grid(2)
-    if x < mat.shape[0] and y < mat.shape[1]:
-        mat[x, y] = mat[x, y] + 1
-
 
 def run_gpu_pso_iterations(particles : DeviceNDArray, fun : Callable[[np.ndarray], float], iterations : int, n_particles : int, l_dim : int, w : float, phi_p : float, phi_g : float, lazy_min : bool = True, enable_tqdm : bool = True) -> DeviceNDArray:
     @cuda.jit
