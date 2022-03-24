@@ -10,14 +10,10 @@ class ABC:
         self.__limits = limits
         self.__n_bees = n_bees
         self.__dim, _ = limits.shape
-        self.__mode = "gpu" if mode == "gpu" else "cpu"
+        self.__mode = "gpu"
         self.__best, self.__best_value = None, None
 
-        if self.__mode == "gpu":
-            self.__bees, self.__fitness = abc_gpu.generate_bees_gpu(n_bees, target, limits)
-        else:
-            #self.__agents, self.__best_global = pso_cpu.generate_particles_cpu(n_particles, limits, target)
-            x = 1
+        self.__bees, self.__fitness = abc_gpu.generate_bees_gpu(n_bees, target, limits)
 
     def iterate(self, n_iterations : int, max_trials : int = 5):
         if self.__mode == "gpu":

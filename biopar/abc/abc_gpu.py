@@ -49,7 +49,7 @@ def generate_bees_gpu(num_bees : int, fun : Callable[[np.ndarray], float], limit
     return bees, fitness
 
 
-def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Callable[[np.ndarray], float], fitness : DeviceNDArray, max_trials : float, num_iterations : int, best : DeviceNDArray = None, best_value : DeviceNDArray = None):
+def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Callable[[np.ndarray], float], fitness : DeviceNDArray, max_trials : float, num_iterations : int, best : DeviceNDArray = None, best_value : DeviceNDArray = None, enable_tqdm : bool = True):
 
     @cuda.jit
     def bee_employer_iteration(
@@ -109,9 +109,9 @@ def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Call
         sum_value : DeviceNDArray
     ):
         x = cuda.grid(1)
-
-        if x < bees.shape[0]:
-            probs[x] = ((-fitness[x]) - minmax_values[0])/sum_value[0]
+        employer_bees = math.ceil(bees.shape[0]/2)
+        if x < employer_bees:
+            probs[x] = ((-fitness[x]) - minmax_values[0])/(sum_value[0]-employer_bees*minmax_values[0])
 
     @cuda.jit
     def bee_onlooker_iteration(
@@ -219,7 +219,13 @@ def abc_run_iterations_gpu(bees : DeviceNDArray, limits : np.ndarray, fun : Call
     seed = int(time())
     rng_states = create_xoroshiro128p_states(employer_bees, seed = seed + 1)
 
-    for _ in tqdm(range(num_iterations)):
+    if enable_tqdm:
+        rg = tqdm(range(num_iterations))
+    else:
+        rg = range(num_iterations)
+
+
+    for _ in rg:
         bee_employer_iteration[blocks_employer, threadsPerBlock](bees, new_bees, fitness, trials, max_trials, rng_states, num_bees, ldim, minmax_values, sum_value, mutex, best, best_value)
         compute_probabilities[blocks_employer, threadsPerBlock](bees, fitness, probs, minmax_values, sum_value)
         bee_onlooker_iteration[blocks_onlooker, threadsPerBlock](bees, fitness, rng_states, ldim, num_bees, probs, mutex, best, best_value)

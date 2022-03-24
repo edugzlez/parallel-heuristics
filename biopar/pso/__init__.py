@@ -20,7 +20,7 @@ class PSO:
             self.__particles, self.__best_global = pso_cpu.generate_particles_cpu(n_particles, limits, target)
             x = 1
 
-    def iterate(self, n_iterations : int, w : float, phi_g : float, phi_p : float, tqdm = True):
+    def iterate(self, n_iterations : int, w : float, phi_g : float, phi_p : float, tqdm = False):
         if self.__mode == "gpu":
             self.__particles, self.__best_global = pso_gpu.run_gpu_pso_iterations(self.__particles, self.__target, n_iterations, self.__n_particles, self.__dim, w, phi_p, phi_g, self.__lazy_min, tqdm)
         else:

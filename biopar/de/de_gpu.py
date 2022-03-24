@@ -51,7 +51,7 @@ def generate_agents_de_gpu(num_agents : int, limits : DeviceNDArray, fun : Calla
 
     return agents
 
-def run_gpu_de_iterations(agents : DeviceNDArray, num_iterations : int, limits : DeviceNDArray, fun : Callable[[np.ndarray], float], CR : float, F : float, lazy_min = True) -> DeviceNDArray:
+def run_gpu_de_iterations(agents : DeviceNDArray, num_iterations : int, limits : DeviceNDArray, fun : Callable[[np.ndarray], float], CR : float, F : float, enable_tqdm = True) -> DeviceNDArray:
     
     @cuda.jit
     def de_agent_iteration(agents : DeviceNDArray, rng_states : DeviceNDArray, CR : float, F : float):
@@ -119,8 +119,13 @@ def run_gpu_de_iterations(agents : DeviceNDArray, num_iterations : int, limits :
 
     seed = int(time())
     rng_states = create_xoroshiro128p_states(num_agents, seed = seed)
+    
+    if enable_tqdm:
+        rg = tqdm(range(num_iterations))
+    else:
+        rg = range(num_iterations)
 
-    for _ in tqdm(range(num_iterations)):
+    for _ in rg:
         de_agent_iteration[math.ceil(num_agents/MAGIC_NUM), MAGIC_NUM](agents, rng_states, CR, F)
     
     best_global = cuda.to_device([0, agents[0, -1]])

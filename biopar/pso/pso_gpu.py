@@ -58,7 +58,7 @@ def generate_particles_gpu(n_particles : int, limits : np.ndarray, fun : Callabl
 
     fun_gpu = cuda.jit(fun, device=True)
     threadsPerBlock = (MAGIC_NUM, 2)
-    blocks = (math.ceil(n_particles/threadsPerBlock[0]), ldim)
+    blocks = (math.ceil(n_particles/threadsPerBlock[0]), math.ceil(ldim/threadsPerBlock[1]))
 
     seed = int(time())
     rng_states = create_xoroshiro128p_states(n_particles, seed = seed)
@@ -77,7 +77,6 @@ def run_gpu_pso_iterations(particles : DeviceNDArray, fun : Callable[[np.ndarray
     @cuda.jit
     def pso_particle_iteration_gpu(particles : DeviceNDArray, best_global, w : float, phi_p : float, phi_g : float, rng_states : DeviceNDArray) -> None:
         x, y = cuda.grid(2)
-        stridex, stridey = cuda.gridsize(2)
         m, n = particles.shape
         n = (n-1)//3
         if x < m and y < n:

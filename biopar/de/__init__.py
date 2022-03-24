@@ -19,11 +19,11 @@ class DE:
         else:
             self.__agents, self.__best_global = de_cpu.generate_agents_cpu(n_agents, limits, target)
 
-    def iterate(self, n_iterations : int, CR : float, F : float):
+    def iterate(self, n_iterations : int, CR : float, F : float, tqdm = False):
         if self.__mode == "gpu":
-            self.__agents, self.__best_global = de_gpu.run_gpu_de_iterations(self.__agents, n_iterations, self.__limits, self.__target, CR, F, self.__lazy_min)
+            self.__agents, self.__best_global = de_gpu.run_gpu_de_iterations(self.__agents, n_iterations, self.__limits, self.__target, CR, F, enable_tqdm = tqdm)
         else:
-            self.__agents, self.__best_global  = de_cpu.run_cpu_de_iterations(self.__agents, self.__target, n_iterations, CR, F, self.__best_global)
+            self.__agents, self.__best_global  = de_cpu.run_cpu_de_iterations(self.__agents, self.__target, n_iterations, CR, F, self.__best_global, enable_tqdm = tqdm)
 
     def getResult(self) -> Tuple[np.ndarray, float]:
         v = self.__agents[int(self.__best_global[0]), :self.__dim]
