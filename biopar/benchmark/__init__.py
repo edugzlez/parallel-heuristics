@@ -1,6 +1,7 @@
 import numpy as np
 import math
 
+
 def ackley(inp : np.ndarray): # f(0,0) = 0  [-5, 5]*2
     x = inp[0]
     y = inp[1]
@@ -58,6 +59,7 @@ def crosstray(inp : np.ndarray): # f(+-1.3494, +-1.3494) = -2.0626, [-10, 10]
 
     return -0.0001 * (math.fabs( math.sin(x)*math.sin(y)*math.exp(math.fabs(100-math.sqrt(x**2+y**2)/math.pi))) + 1 )**0.1
 
+
 def eggholder(inp : np.ndarray): # f(512, 404.2319) = -959.6407
     x = inp[0]
     y = inp[1]
@@ -75,3 +77,112 @@ def styblinkski(inp): # f(-2.9035, ..., -2.9035) = -39.16617   [-5, 5]
     for i in range(len(inp)):
         s += inp[i] ** 4 - 16 * inp[i]**2 + 5*inp[i]
     return (s/2)/len(inp)
+
+functions = {
+    "styblinkski" : {
+        "fun" : styblinkski,
+        "limits" : np.array([
+            [-5, 5]
+        ]),
+        "min_value" : -39.16617,
+        "ext" : True
+    },
+    "schaffer" : {
+        "fun" : schaffer,
+        "limits" : np.array([
+           [-5, 5],
+           [-5, 5]
+        ]),
+        "min_value" : 0.292579,
+        "ext" : False
+    },
+    "eggholder" : {
+        "fun" : eggholder,
+        "limits" : np.array([
+           [-512, 512],
+           [-512, 512]
+        ]),
+        "min_value" : -959.6407,
+        "ext" : False
+    },
+    "crosstray" : {
+        "fun" : crosstray,
+        "limits" : np.array([
+           [-10, 10],
+           [-10, 10]
+        ]),
+        "min_value" : -2.0626,
+        "ext" : False
+    },
+    "himmelblau" : {
+        "fun" : himmelblau,
+        "limits" : np.array([
+           [-5, 5],
+           [-5, 5]
+        ]),
+        "min_value" : 0,
+        "ext" : False
+    },
+    "levy" : {
+        "fun" : levy,
+        "limits" : np.array([
+           [-10, 10],
+           [-10, 10]
+        ]),
+        "min_value" : 0,
+        "ext" : False
+    },
+    "ackley" : {
+        "fun" : ackley,
+        "limits" : np.array([
+           [-5, -5],
+           [-5, -5] 
+        ]),
+        "min_value" : 0,
+        "ext" : False
+    },
+    "rosenbrock" : {
+        "fun" : rosenbrock,
+        "limits" : np.array([
+           [-100, -100]
+        ]),
+        "min_value" : 0,
+        "ext" : True
+    },
+    "beale" : {
+        "fun" : beale,
+        "limits" : np.array([
+           [-4.5, 4.5],
+           [-4.5, 4.5],
+        ]),
+        "min_value" : 0,
+        "ext" : False
+    },
+    "goldstein" : {
+        "fun" : goldstein,
+        "limits" : np.array([
+           [-10, 10],
+           [-10, 10],
+        ]),
+        "min_value" : 3,
+        "ext" : False
+    },
+    "goldstein" : {
+        "fun" : matyas,
+        "limits" : np.array([
+           [-10, 10],
+           [-10, 10],
+        ]),
+        "min_value" : 0,
+        "ext" : False
+    },
+    "bukin" : {
+        "fun" : bukin,
+        "limits" : np.array([
+           [-15, -5],
+           [-3, 3],
+        ]),
+        "min_value" : 0,
+        "ext" : False
+    }
+}

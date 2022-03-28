@@ -15,9 +15,9 @@ class ABC:
 
         self.__bees, self.__fitness = abc_gpu.generate_bees_gpu(n_bees, target, limits)
 
-    def iterate(self, n_iterations : int, max_trials : int = 5):
+    def iterate(self, n_iterations : int, max_trials : int = 5, tqdm=False):
         if self.__mode == "gpu":
-            self.__bees, self.__fitness, self.__best, self.__best_value = abc_gpu.abc_run_iterations_gpu(self.__bees, self.__limits, self.__target, self.__fitness, max_trials, n_iterations, best=self.__best, best_value=self.__best_value)
+            self.__bees, self.__fitness, self.__best, self.__best_value = abc_gpu.abc_run_iterations_gpu(self.__bees, self.__limits, self.__target, self.__fitness, max_trials, n_iterations, best=self.__best, best_value=self.__best_value, enable_tqdm=tqdm)
         else:
             pass #self.__particles, self.__best_global  = pso_cpu.run_cpu_pso_iterations(self.__particles, self.__target, n_iterations, self.__n_particles, self.__dim, w, phi_p, phi_g)
 
